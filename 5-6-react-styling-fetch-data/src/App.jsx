@@ -204,6 +204,28 @@ export default function App() {
      ========================================================= */
   useEffect(() => {
     // TODO 2.1: Implement fetching users here (see lab instructions)
+    async function fetchUsers() {
+      try {
+         setLoading(true);
+         setError(null);
+
+         const response = await fetch("https://jsonplaceholder.typicode.com/users");
+         if (!response.ok) {
+            throw new Error(`Request failed: ${response.status}`);
+          }
+
+         const data = await response.json();
+         setUsers(data);
+         setFilteredUsers(data);
+      } catch (err) {
+         setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUsers();
+
   }, []);
 
   /* =========================================================
@@ -215,6 +237,15 @@ export default function App() {
      ========================================================= */
   useEffect(() => {
     // TODO 2.2: Implement filtering users here (see lab instructions)
+    if (!searchTerm.trim()) {
+      setFilteredUsers(users);
+      return;
+    }
+    const term = searchTerm.toLowerCase();
+    const filtered = users.filter((user) =>
+      user.name.toLowerCase().includes(term)
+   );
+   setFilteredUsers(filtered);
   }, [searchTerm, users]);
 
   // Modal handlers (already complete)
